@@ -1,0 +1,12 @@
+{{- if .Values.createNamespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Release.Namespace }}
+  annotations:
+    # Zonder deze wave probeert Argo CD de Deployment te maken voordat de
+    # namespace bestaat.
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    {{- include "demo-app.labels" . | nindent 4 }}
+{{- end }}

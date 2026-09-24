@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-app-main
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/alexhensen/aks-argocd-demo-gitops.git
+    targetRevision: main
+    path: charts/demo-app
+    helm:
+      valuesObject:
+        environmentName: main
+        image:
+          repository: ghcr.io/alexhensen/aks-argocd-demo-app
+          tag: latest
+          # De main omgeving volgt een bewegende tag, dus altijd opnieuw pullen.
+          pullPolicy: Always
+        ingress:
+          host: app.20.103.113.146.nip.io
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-main
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: demo-previews
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - pullRequest:
+        github:
+          owner: alexhensen
+          repo: aks-argocd-demo-app
+          tokenRef:
+            secretName: github-token
+            key: token
+          # CI zet dit label pas nadat de image daadwerkelijk in GHCR staat.
+          # Daardoor bestaat er nooit een preview zonder image.
+          labels:
+            - preview
+        # Laag gezet voor de demo; in productie hoort hier een webhook.
+        requeueAfterSeconds: 30
+  template:
+    metadata:
+      name: "preview-pr-{{ .number }}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/alexhensen/aks-argocd-demo-gitops.git
+        targetRevision: main
+        path: charts/demo-app
+        helm:
+          valuesObject:
+            environmentName: "PR #{{ .number }}"
+            pullRequest: "{{ .number }}"
+            commitSha: "{{ .head_sha }}"
+            image:
+              repository: ghcr.io/alexhensen/aks-argocd-demo-app
+              tag: "sha-{{ .head_sha }}"
+            ingress:
+              host: "pr-{{ .number }}.20.103.113.146.nip.io"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "preview-pr-{{ .number }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

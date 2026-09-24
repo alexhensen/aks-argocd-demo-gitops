@@ -1,0 +1,29 @@
+# Naam die groot op de pagina verschijnt en de accentkleur bepaalt.
+environmentName: local
+
+# Leeg voor permanente omgevingen, gevuld voor preview omgevingen.
+pullRequest: ""
+commitSha: ""
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/alexhensen/aks-argocd-demo-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+ingress:
+  enabled: true
+  className: nginx
+  host: ""
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 96Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+# Maakt de namespace onderdeel van de release, zodat Argo CD hem ook opruimt.
+createNamespace: true

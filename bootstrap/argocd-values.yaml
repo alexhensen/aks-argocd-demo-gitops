@@ -1,0 +1,30 @@
+## Argo CD waarden voor de demo.
+## Bewust uitgekleed: geen TLS, geen SSO, alles zichtbaar op een podium.
+
+global:
+  domain: argocd.20.103.113.146.nip.io
+
+configs:
+  params:
+    # nginx termineert niets, dus Argo CD moet zelf in plain HTTP praten.
+    server.insecure: true
+  cm:
+    # Zonder dit blijven PR omgevingen als "OutOfSync" staan omdat Argo CD
+    # de namespace die hij zelf aanmaakt niet herkent.
+    application.resourceTrackingMethod: annotation
+    timeout.reconciliation: 30s
+
+server:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hostname: argocd.20.103.113.146.nip.io
+
+applicationSet:
+  enabled: true
+
+dex:
+  enabled: false
+
+notifications:
+  enabled: false
