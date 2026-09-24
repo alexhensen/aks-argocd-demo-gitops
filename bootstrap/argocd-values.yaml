@@ -25,7 +25,7 @@ server:
       cert-manager.io/cluster-issuer: letsencrypt-staging
       nginx.ingress.kubernetes.io/auth-type: basic
       nginx.ingress.kubernetes.io/auth-secret: argocd-basic-auth
-      nginx.ingress.kubernetes.io/auth-realm: "Argo CD demo — vraag toegang aan Alex"
+      nginx.ingress.kubernetes.io/auth-realm: "Argo CD demo - vraag toegang aan Alex"
     tls: true
 
 applicationSet:
