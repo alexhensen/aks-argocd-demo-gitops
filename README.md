@@ -12,6 +12,7 @@ nooit vanaf een laptop of pipeline naar het cluster gedeployed.
 | `bootstrap/application-main.yaml` | De permanente `main` omgeving |
 | `bootstrap/applicationset-previews.yaml` | Genereert één omgeving per pull request |
 | `bootstrap/argocd-values.yaml` | Helm waarden waarmee Argo CD zelf is geïnstalleerd |
+| `DEMO.md` | Draaiboek voor de presentatie |
 
 Dezelfde chart voor preview en main is bewust: wat je in een pull request test
 is exact het manifest dat straks naar main gaat.
