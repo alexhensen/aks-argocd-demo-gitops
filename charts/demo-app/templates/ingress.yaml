@@ -9,10 +9,11 @@ metadata:
     {{- if .Values.ingress.clusterIssuer }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
     {{- end }}
-    {{- if .Values.ingress.noIndex }}
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      add_header X-Robots-Tag "noindex, nofollow" always;
-    {{- end }}
+    {{- /*
+      Noindex-header komt uit de app zelf (Program.cs), niet uit een nginx
+      configuration-snippet: die zijn hier uitgeschakeld door de
+      ingress-nginx installatie (CVE-2021-25742/25743).
+    */}}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   {{- if .Values.ingress.clusterIssuer }}

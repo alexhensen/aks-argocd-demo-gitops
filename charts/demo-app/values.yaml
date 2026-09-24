@@ -19,8 +19,6 @@ ingress:
   # Leeg = geen TLS (nip.io fallback). Zet op "letsencrypt-prod" of
   # "letsencrypt-staging" zodra het echte domein DNS heeft.
   clusterIssuer: ""
-  # Voorkomt dat wegwerp-previews in zoekmachines belanden.
-  noIndex: true
 
 resources:
   requests:
