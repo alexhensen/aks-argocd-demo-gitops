@@ -31,12 +31,13 @@ Het label is de poort: zonder geslaagde build geen omgeving.
 
 | Omgeving | URL |
 |---|---|
-| Argo CD | http://argocd.20.103.113.146.nip.io |
-| main | http://app.20.103.113.146.nip.io |
-| preview | `http://pr-<nummer>.20.103.113.146.nip.io` |
+| Argo CD | http://argocd.20-103-113-146.nip.io |
+| main | http://app.20-103-113-146.nip.io |
+| preview | `http://pr-<nummer>.20-103-113-146.nip.io` |
 
 `nip.io` vertaalt een IP in de hostnaam naar datzelfde IP, dus er is geen
-DNS-zone nodig.
+DNS-zone nodig. De streepjesnotatie is bewust: bij `20.103.113.146.nip.io`
+herkent nip.io in `pr-1.20.103.113.146` het verkeerde adres `1.20.103.113`.
 
 ## Opnieuw opbouwen na een nieuw cluster
 

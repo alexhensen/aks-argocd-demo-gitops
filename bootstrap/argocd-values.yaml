@@ -2,7 +2,7 @@
 ## Bewust uitgekleed: geen TLS, geen SSO, alles zichtbaar op een podium.
 
 global:
-  domain: argocd.20.103.113.146.nip.io
+  domain: argocd.20-103-113-146.nip.io
 
 configs:
   params:
@@ -18,7 +18,7 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: argocd.20.103.113.146.nip.io
+    hostname: argocd.20-103-113-146.nip.io
 
 applicationSet:
   enabled: true

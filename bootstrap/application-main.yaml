@@ -18,7 +18,7 @@ spec:
           # De main omgeving volgt een bewegende tag, dus altijd opnieuw pullen.
           pullPolicy: Always
         ingress:
-          host: app.20.103.113.146.nip.io
+          host: app.20-103-113-146.nip.io
   destination:
     server: https://kubernetes.default.svc
     namespace: demo-main
