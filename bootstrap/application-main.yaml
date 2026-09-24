@@ -12,11 +12,11 @@ spec:
     helm:
       valuesObject:
         environmentName: main
-        commitSha: "539a0cf5e794bd284276a8eaa9a19875368eba4c"
+        commitSha: "52a87356b133c6bda72e9ace6cb8250a01edac39"
         image:
           repository: ghcr.io/alexhensen/aks-argocd-demo-app
           # Deze regel wordt door CI bijgewerkt na elke merge naar main.
-          tag: sha-346a5a8a401bdc3c58ca949ae731cfde6effc5a2
+          tag: sha-52a87356b133c6bda72e9ace6cb8250a01edac39
         ingress:
           host: app.20-103-113-146.nip.io
   destination:
