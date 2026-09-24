@@ -39,16 +39,22 @@ tegelijk het deployment-logboek.
 
 | Omgeving | URL |
 |---|---|
-| Argo CD | http://argocd.20-103-113-146.nip.io |
-| main | http://app.20-103-113-146.nip.io |
-| preview | `http://pr-<nummer>.20-103-113-146.nip.io` |
+| Argo CD | https://argocd.demo.alexhensen.com (basic auth + admin login) |
+| main | https://app.demo.alexhensen.com |
+| preview | `https://pr-<nummer>.demo.alexhensen.com` |
 
-`nip.io` vertaalt een IP in de hostnaam naar datzelfde IP, dus er is geen
-DNS-zone nodig. De streepjesnotatie is bewust: bij `20.103.113.146.nip.io`
-herkent nip.io in `pr-1.20.103.113.146` het verkeerde adres `1.20.103.113`.
+Het domein `alexhensen.com` heeft al een wildcard-record dat naar de
+bestaande productiesite wijst. Om daar niet mee te botsen staat er precies
+één extra laag onder: `demo.alexhensen.com` en `*.demo.alexhensen.com` zijn
+expliciete A-records naar het ingress IP, bij TransIP toegevoegd (niet in
+Azure DNS — de DNS-zone van dit domein zit bij de registrar). TLS-certificaten
+komen automatisch van Let's Encrypt via cert-manager; zie
+`bootstrap/cluster-issuers.yaml`.
 
 ## Opnieuw opbouwen na een nieuw cluster
 
 Het IP van de ingress controller zit in deze bestanden verwerkt. Bij een nieuw
-cluster verandert dat IP en moet het op drie plekken worden bijgewerkt:
-`argocd-values.yaml`, `application-main.yaml` en `applicationset-previews.yaml`.
+cluster verandert dat IP en moet het bijgewerkt worden: het TransIP A-record
+voor `demo` en `*.demo`, plus (als er tijdelijk met nip.io wordt gewerkt
+voordat DNS is aangepast) de hostnamen in `argocd-values.yaml`,
+`application-main.yaml` en `applicationset-previews.yaml`.

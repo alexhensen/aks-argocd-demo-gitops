@@ -1,12 +1,14 @@
 ## Argo CD waarden voor de demo.
-## Bewust uitgekleed: geen TLS, geen SSO, alles zichtbaar op een podium.
+## Op het eigen domein: TLS via cert-manager + Let's Encrypt, en een extra
+## basic-auth-laag vóór de inlogpagina zelf (defense in depth — de UI is
+## publiek bereikbaar, de admin login mag niet de enige verdedigingslinie zijn).
 
 global:
-  domain: argocd.20-103-113-146.nip.io
+  domain: argocd.demo.alexhensen.com
 
 configs:
   params:
-    # nginx termineert niets, dus Argo CD moet zelf in plain HTTP praten.
+    # nginx termineert TLS, dus Argo CD mag zelf in plain HTTP praten.
     server.insecure: true
   cm:
     # Zonder dit blijven PR omgevingen als "OutOfSync" staan omdat Argo CD
@@ -18,7 +20,13 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hostname: argocd.20-103-113-146.nip.io
+    hostname: argocd.demo.alexhensen.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+      nginx.ingress.kubernetes.io/auth-type: basic
+      nginx.ingress.kubernetes.io/auth-secret: argocd-basic-auth
+      nginx.ingress.kubernetes.io/auth-realm: "Argo CD demo — vraag toegang aan Alex"
+    tls: true
 
 applicationSet:
   enabled: true

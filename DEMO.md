@@ -5,9 +5,13 @@ de Argo CD UI en een browser met de `main` omgeving.
 
 | Rol | URL |
 |---|---|
-| Argo CD | http://argocd.20-103-113-146.nip.io (`admin`) |
-| main | http://app.20-103-113-146.nip.io |
-| preview | `http://pr-<nummer>.20-103-113-146.nip.io` |
+| Argo CD | https://argocd.demo.alexhensen.com (basic auth: `demo`, dan admin-login) |
+| main | https://app.demo.alexhensen.com |
+| preview | `https://pr-<nummer>.demo.alexhensen.com` |
+
+Het basic-auth-wachtwoord staat in het sessiebestand
+`files/argocd-basic-auth-password.txt`; dit is een extra laag vóór de
+Argo CD-inlogpagina zelf.
 
 Wachtwoord ophalen:
 
@@ -86,8 +90,11 @@ met een schema per omgeving. Dat is een ontwerpkeuze, geen Argo CD instelling.
 
 Eerlijk blijven over de afstand tot productie maakt het verhaal sterker.
 
-- Het cluster heeft een publiek endpoint en de omgevingen draaien op HTTP.
+- Het cluster heeft een publiek endpoint. Sinds de koppeling met
+  `demo.alexhensen.com` draait alles wel over HTTPS met een geldig
+  Let's Encrypt-certificaat.
 - Er is geen authenticatie voor de previews; iedereen met de URL komt erbij.
+  De preview-ingress zet wel `noindex` zodat ze niet in zoekmachines komen.
 - Er zit geen database, geen migratie en geen realistische testdata in.
 - Er is geen automatische vervaltijd; een pull request die maanden openstaat
   houdt zijn omgeving. In productie hoort daar een TTL op.

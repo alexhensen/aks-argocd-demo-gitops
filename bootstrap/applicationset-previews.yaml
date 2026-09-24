@@ -38,7 +38,8 @@ spec:
               repository: ghcr.io/alexhensen/aks-argocd-demo-app
               tag: "sha-{{ .head_sha }}"
             ingress:
-              host: "pr-{{ .number }}.20-103-113-146.nip.io"
+              host: "pr-{{ .number }}.demo.alexhensen.com"
+              clusterIssuer: letsencrypt-staging
       destination:
         server: https://kubernetes.default.svc
         namespace: "preview-pr-{{ .number }}"

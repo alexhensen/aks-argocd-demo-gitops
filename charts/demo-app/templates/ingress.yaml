@@ -5,8 +5,24 @@ metadata:
   name: {{ include "demo-app.name" . }}
   labels:
     {{- include "demo-app.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.ingress.clusterIssuer }}
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+    {{- end }}
+    {{- if .Values.ingress.noIndex }}
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      add_header X-Robots-Tag "noindex, nofollow" always;
+    {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.clusterIssuer }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host | quote }}
+      # Eén secret per host: elke preview heeft zijn eigen certificaat en
+      # niets om op te ruimen buiten de namespace die toch al verdwijnt.
+      secretName: {{ include "demo-app.name" . }}-tls
+  {{- end }}
   rules:
     - host: {{ .Values.ingress.host | quote }}
       http:
