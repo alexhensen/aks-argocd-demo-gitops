@@ -6,7 +6,6 @@ demo-app
 app.kubernetes.io/name: {{ include "demo-app.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 app.kubernetes.io/managed-by: argocd
-demo.alexhensen.com/environment: {{ .Values.environmentName | quote }}
 {{- end -}}
 
 {{- define "demo-app.selectorLabels" -}}

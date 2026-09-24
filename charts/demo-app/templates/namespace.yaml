@@ -7,6 +7,9 @@ metadata:
     # Zonder deze wave probeert Argo CD de Deployment te maken voordat de
     # namespace bestaat.
     argocd.argoproj.io/sync-wave: "-1"
+    # Als annotatie, niet als label: een omgevingsnaam als "PR #1" is geen
+    # geldige labelwaarde.
+    demo.alexhensen.com/environment: {{ .Values.environmentName | quote }}
   labels:
     {{- include "demo-app.labels" . | nindent 4 }}
 {{- end }}
