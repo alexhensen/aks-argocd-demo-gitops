@@ -27,6 +27,13 @@ is exact het manifest dat straks naar main gaat.
 
 Het label is de poort: zonder geslaagde build geen omgeving.
 
+## Hoe main wordt bijgewerkt
+
+CI heeft geen inloggegevens voor het cluster. Na een merge naar main werkt de
+workflow alleen de image tag in `bootstrap/application-main.yaml` bij. Argo CD
+ziet die commit en rolt uit. Daardoor is de Git-historie van deze repository
+tegelijk het deployment-logboek.
+
 ## URL's
 
 | Omgeving | URL |
