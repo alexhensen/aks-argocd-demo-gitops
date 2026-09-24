@@ -39,7 +39,7 @@ spec:
               tag: "sha-{{ .head_sha }}"
             ingress:
               host: "pr-{{ .number }}.demo.alexhensen.com"
-              clusterIssuer: letsencrypt-staging
+              clusterIssuer: letsencrypt-prod
       destination:
         server: https://kubernetes.default.svc
         namespace: "preview-pr-{{ .number }}"

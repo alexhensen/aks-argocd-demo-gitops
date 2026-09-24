@@ -19,7 +19,7 @@ spec:
           tag: sha-a6c32cc1b1d450e24c6ed3037ac9f8518616d736
         ingress:
           host: app.demo.alexhensen.com
-          clusterIssuer: letsencrypt-staging
+          clusterIssuer: letsencrypt-prod
   destination:
     server: https://kubernetes.default.svc
     namespace: demo-main
