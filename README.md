@@ -85,11 +85,37 @@ zonder data om te migreren):
 6. Pas na een geslaagde TLS-uitgifte (`kubectl get certificate -A`) het oude
    cluster verwijderen — niet eerder, anders is er geen werkende fallback.
 
-Let's Encrypt-validatie van een gloednieuw publiek IP kan de eerste tijd
-falen met `Timeout during connect` terwijl het IP wel degelijk bereikbaar is
-(HTTP-01 valideert vanaf meerdere netwerklocaties; een nieuw toegewezen
-cloud-IP is niet overal meteen even goed routeerbaar). Forceer niet
-herhaaldelijk een nieuwe poging: Let's Encrypt hanteert een limiet van vijf
-mislukte validaties per uur per hostnaam. Verwijder de `Certificate`
-(`kubectl delete certificate -n <ns> <naam>`) pas opnieuw na voldoende
-wachttijd, of laat cert-manager het vanzelf opnieuw proberen.
+### Bekend probleem: gloednieuwe subscription, inconsistente externe bereikbaarheid
+
+Bij de migratie naar een subscription die voor het eerst publieke resources
+kreeg, bleek het ingress-IP van buitenaf inconsistent bereikbaar: prima
+vanaf sommige netwerken, maar `Timeout during connect` vanaf andere —
+onder meer vanaf een GitHub Actions-runner (Azure `centralus`) en vanaf zowel
+Let's Encrypt als ZeroSSL (twee onafhankelijke CA's, dus geen CA-specifiek
+probleem). Uitgesloten als oorzaak, met bewijs:
+
+- NSG, load balancer-regels en -probes: identiek aan de werkende configuratie
+  en met `az network nsg rule show` bevestigd dat poort 80 én 443 open staan
+  voor `Internet`.
+- nginx/cert-manager zelf: een `kubectl run curltest ... curl http://<ip>/`
+  **vanuit een pod in hetzelfde cluster** kreeg gewoon de verwachte 308-
+  redirect; de ingress werkt dus correct.
+- Het specifieke IP: een volledig nieuw toegewezen publiek IP (andere
+  Azure-range) vertoonde exact hetzelfde patroon, dus het zat niet aan één
+  ongelukkig IP-adres vast.
+
+Conclusie: dit is een Azure-platformkarakteristiek van een *net voor het
+eerst publieke resources uitrollende* subscription, geen fout in deze
+repository of in het cluster. Twee opties:
+
+1. **Wachten** (kan langer duren dan de gebruikelijke BGP-propagatie van
+   enkele minuten — in de praktijk eerder uren). Forceer geen herhaalde
+   `Certificate`-verwijdering: Let's Encrypt en ZeroSSL hanteren allebei een
+   limiet van ongeveer vijf mislukte validaties per uur per hostnaam
+   (per CA/account apart geteld).
+2. **Een Azure-supportticket openen** onder vermelding van deze bevindingen
+   als het na enkele uren nog steeds niet oplost; dit is geen probleem dat
+   via Kubernetes- of NSG-configuratie op te lossen is.
+
+Zodra het probleem is verdwenen, pakt cert-manager automatisch de
+certificaatuitgifte weer op zonder verdere actie.
