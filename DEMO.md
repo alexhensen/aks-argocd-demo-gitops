@@ -111,9 +111,14 @@ Het cluster kost ongeveer honderdvijftig euro per maand als het blijft
 draaien. Tussen presentaties door:
 
 ```bash
-az aks stop  --resource-group rg-argocd-demo --name aks-argocd-demo
-az aks start --resource-group rg-argocd-demo --name aks-argocd-demo
+az aks stop  --subscription <subscription-id> --resource-group rg-argocd-demo --name aks-argocd-demo
+az aks start --subscription <subscription-id> --resource-group rg-argocd-demo --name aks-argocd-demo
 ```
+
+De resourcegroepnaam `rg-argocd-demo` komt mogelijk in meerdere Azure-
+subscriptions voor (bijvoorbeeld tijdens een migratie tussen subscriptions).
+Geef `--subscription` daarom altijd expliciet mee; vertrouw niet op de
+default subscription van `az account show`.
 
 Na een `start` houdt het cluster hetzelfde ingress IP zolang de
 LoadBalancer service blijft bestaan. Verandert het IP toch, werk dan de

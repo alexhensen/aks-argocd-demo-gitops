@@ -51,10 +51,45 @@ Azure DNS — de DNS-zone van dit domein zit bij de registrar). TLS-certificaten
 komen automatisch van Let's Encrypt via cert-manager; zie
 `bootstrap/cluster-issuers.yaml`.
 
-## Opnieuw opbouwen na een nieuw cluster
+## Azure-omgeving
+
+Het cluster `aks-argocd-demo` (resourcegroep `rg-argocd-demo`, regio
+`westeurope`) draait in een losse, lege Azure-subscription die uitsluitend
+voor deze demo dient. Gebruik bij elk `az`-commando altijd `--subscription`
+expliciet: de resourcegroepnaam is niet uniek over subscriptions heen, en de
+default subscription van de CLI-sessie kan per gebruiker/moment verschillen.
+
+## Opnieuw opbouwen na een nieuw cluster of migratie naar een andere subscription
 
 Het IP van de ingress controller zit in deze bestanden verwerkt. Bij een nieuw
-cluster verandert dat IP en moet het bijgewerkt worden: het TransIP A-record
-voor `demo` en `*.demo`, plus (als er tijdelijk met nip.io wordt gewerkt
-voordat DNS is aangepast) de hostnamen in `argocd-values.yaml`,
-`application-main.yaml` en `applicationset-previews.yaml`.
+cluster (ook bij verhuizing naar een andere Azure-subscription) verandert dat
+IP en moet het bijgewerkt worden: het TransIP A-record voor `demo` en
+`*.demo`, plus (als er tijdelijk met nip.io wordt gewerkt voordat DNS is
+aangepast) de hostnamen in `argocd-values.yaml`, `application-main.yaml` en
+`applicationset-previews.yaml`.
+
+Stappen voor een migratie naar een andere subscription (reproduceerbaar,
+zonder data om te migreren):
+
+1. Resourcegroep en AKS-cluster aanmaken in de doel-subscription met dezelfde
+   specificaties (1 node, `Standard_D2as_v5`, `--load-balancer-sku standard`).
+2. `ingress-nginx`, `cert-manager` en Argo CD installeren met de Helm-waarden
+   uit dit repository (`bootstrap/argocd-values.yaml`).
+3. De secrets `argocd-basic-auth` en `github-token` overzetten (bevatten
+   gevoelige waarden, staan bewust niet in Git).
+4. `bootstrap/cluster-issuers.yaml` en `bootstrap/root.yaml` toepassen; Argo
+   CD synchroniseert vanaf dat moment zelfstandig alles uit deze repository,
+   inclusief eventuele openstaande preview-omgevingen.
+5. Het nieuwe ingress-IP ophalen en de TransIP A-records (`demo` en `*.demo`)
+   bijwerken.
+6. Pas na een geslaagde TLS-uitgifte (`kubectl get certificate -A`) het oude
+   cluster verwijderen — niet eerder, anders is er geen werkende fallback.
+
+Let's Encrypt-validatie van een gloednieuw publiek IP kan de eerste tijd
+falen met `Timeout during connect` terwijl het IP wel degelijk bereikbaar is
+(HTTP-01 valideert vanaf meerdere netwerklocaties; een nieuw toegewezen
+cloud-IP is niet overal meteen even goed routeerbaar). Forceer niet
+herhaaldelijk een nieuwe poging: Let's Encrypt hanteert een limiet van vijf
+mislukte validaties per uur per hostnaam. Verwijder de `Certificate`
+(`kubectl delete certificate -n <ns> <naam>`) pas opnieuw na voldoende
+wachttijd, of laat cert-manager het vanzelf opnieuw proberen.
