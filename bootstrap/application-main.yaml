@@ -12,11 +12,11 @@ spec:
     helm:
       valuesObject:
         environmentName: main
-        commitSha: "2f9ad383e81d5da6cd2205ac9e4f6d2406746c69"
+        commitSha: "ba0154e8aaaad76b69117634afced2cd7925bec5"
         image:
           repository: ghcr.io/alexhensen/aks-argocd-demo-app
           # Deze regel wordt door CI bijgewerkt na elke merge naar main.
-          tag: sha-2f9ad383e81d5da6cd2205ac9e4f6d2406746c69
+          tag: sha-ba0154e8aaaad76b69117634afced2cd7925bec5
         ingress:
           host: app.demo.alexhensen.com
           clusterIssuer: letsencrypt-prod
